@@ -1,0 +1,39 @@
+{
+  "manifest_version": 2,
+  "name": "Facebook Access Limit",
+  "version": "1.1",
+  "icons": {
+    "16": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
+  },
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "activeTab",
+    "history",
+    "tabs",
+    "runtime",
+    "webNavigation",
+    "https://facebook.com/*",
+    "https://youtube.com/*",
+    "cookies",
+    "storage"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval' 'unsafe-inline';",
+  "content_scripts": [
+    {
+      "matches": ["https://*/*"],
+      "js": ["script.js"]
+    }
+  ],
+  "background":{
+    "scripts": ["script.js"]
+  }
+}
