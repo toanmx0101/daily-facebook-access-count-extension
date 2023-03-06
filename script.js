@@ -1,7 +1,6 @@
 
 function countItemsInHistory() {
   var oneDayAgo = new Date();
-  oneDayAgo.setDate(oneDayAgo.getDate() - 1);
   var startTime = oneDayAgo.setHours(0,0,0,0)
 
 
@@ -27,8 +26,10 @@ function countItemsInHistory() {
         chrome.browserAction.setBadgeBackgroundColor({
           color: "#FFBF00"
         })
-      } else {
-        chrome.browserAction.setBadgeBackgroundColor({color: 'default'});
+      } else if (cnt <= 20) {
+        chrome.browserAction.setBadgeBackgroundColor({
+          color: "#404042"
+        })
       }
     });
   });
@@ -45,15 +46,17 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 
 function scheduleNextReset() {
   var oneDayAgo = new Date();
-  oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+  oneDayAgo.setHours(0,0,0,0)
+
   var startTime = oneDayAgo.getTime();
   var query = {text: 'facebook', startTime: startTime, endTime: Date.now()};
   chrome.history.search(query, function(results) {
     var totalVisitCount = results.reduce((acc, item) => acc + item.visitCount, 0);
 
-    chrome.storage.local.get(['nextResetAt'], function(data) {
+    chrome.storage.local.get(['nextResetAt', 'totalFacebookAccessCount'], function(data) {
       resetTime = Date.parse(data.nextResetAt)
-      if (Date.now() > resetTime || resetTime == undefined || resetTime.toString() == 'NaN' ) {
+      totalFacebookAccessCount = parseInt(data.totalFacebookAccessCount)
+      if (totalFacebookAccessCount == 0 || Date.now() > resetTime || resetTime == undefined || resetTime.toString() == 'NaN' ) {
         var oneDayLater = new Date();
         oneDayLater.setDate(oneDayLater.getDate() + 1);
         oneDayLater.setHours(0,0,0,0)
